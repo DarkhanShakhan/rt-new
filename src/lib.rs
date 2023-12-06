@@ -1,0 +1,37 @@
+pub mod features {
+    pub use camera::*;
+    pub use canvas::*;
+    pub use color::*;
+    pub use computation::*;
+    pub use consts::*;
+    pub use intersection::*;
+    pub use light::*;
+    pub use material::*;
+    pub use matrice::*;
+    pub use object::*;
+    pub use pattern::*;
+    pub use point::*;
+    pub use ray::*;
+    pub use shape::*;
+    pub use transformations::*;
+    pub use vector::*;
+    pub use world::*;
+    mod camera;
+    mod canvas;
+    mod color;
+    mod computation;
+    mod consts;
+    mod intersection;
+    mod light;
+    mod material;
+    mod matrice;
+    mod object;
+    mod pattern;
+    mod point;
+    mod ray;
+    mod shape;
+    mod transformations;
+    mod tuple;
+    mod vector;
+    mod world;
+}
