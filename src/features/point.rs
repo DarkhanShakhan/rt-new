@@ -13,6 +13,15 @@ impl Point {
             position: Tuple::new(x, y, z),
         }
     }
+    pub fn x(&self) -> f64 {
+        self.position.x
+    }
+    pub fn y(&self) -> f64 {
+        self.position.y
+    }
+    pub fn z(&self) -> f64 {
+        self.position.z
+    }
 }
 
 impl Add for Point {

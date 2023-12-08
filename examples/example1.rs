@@ -30,10 +30,35 @@ fn main() {
         })
         .transformation(rotation_x(PI / 2.0) * translation(0.0, 0.0, 15.0))
         .build();
-
-    let light = Light::new(Point::new(15.0, 10.0, -10.0), WHITE);
+    let glass_sphere_s = Object::sphere_builder()
+        .material(Material {
+            transparency: 0.8,
+            refractive_index: 1.0,
+            ..Default::default()
+        })
+        .transformation(translation(1.0, 1.0, -2.0))
+        .build();
+    let glass_sphere = Object::sphere_builder()
+        .material(Material {
+            color: Color::new(0.1, 0.1, 0.1),
+            diffuse: 0.3,
+            specular: 0.2,
+            reflective: 0.00,
+            transparency: 1.0,
+            refractive_index: 1.5,
+            ..Default::default()
+        })
+        .transformation(translation(3.0, 1.0, -2.0))
+        .build();
+    let light = Light::new(Point::new(5.0, 10.0, -10.0), WHITE);
     let mut world = World::new(light);
-    world.add_shapes(vec![wall_left, floor, wall_right]);
+    world.add_shapes(vec![
+        wall_left,
+        floor,
+        wall_right,
+        glass_sphere,
+        glass_sphere_s,
+    ]);
     let from = Point::new(8.0, 2.5, -10.5);
     let to = Point::new(1.5, 3.0, 0.0);
     let up = Vector::new(0.0, 1.0, 0.0);

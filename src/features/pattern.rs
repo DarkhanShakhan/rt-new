@@ -54,6 +54,12 @@ impl Pattern {
             ..Default::default()
         }
     }
+    pub fn test() -> Pattern {
+        Pattern {
+            pattern_type: PatternType::Test,
+            ..Default::default()
+        }
+    }
     pub fn set_transformation(&mut self, transformation: Matrice) {
         self.transformation = transformation;
         self.transformation_inverse = self.transformation.inverse();
@@ -65,6 +71,7 @@ pub enum PatternType {
     Stripe(Color, Color),
     Gradient(Color, Color),
     Checker(Color, Color),
+    Test,
 }
 
 impl Default for PatternType {
@@ -80,6 +87,7 @@ impl PatternType {
             PatternType::Stripe(c1, c2) => at_stripe(c1, c2, point),
             PatternType::Gradient(from, to) => at_gradient(from, to, point),
             PatternType::Checker(c1, c2) => at_checker(c1, c2, point),
+            PatternType::Test => at_test(point),
         }
     }
 }
@@ -112,4 +120,8 @@ fn at_checker(c1: &Color, c2: &Color, point: &Point) -> Color {
         return *c1;
     }
     *c2
+}
+
+fn at_test(point: &Point) -> Color {
+    Color::from(point.position)
 }
