@@ -43,8 +43,8 @@ fn main() {
             color: Color::new(0.1, 0.1, 0.1),
             diffuse: 0.3,
             specular: 0.2,
-            reflective: 0.00,
-            transparency: 1.0,
+            reflective: 0.9,
+            transparency: 0.9,
             refractive_index: 1.5,
             ..Default::default()
         })
@@ -63,8 +63,8 @@ fn main() {
     let to = Point::new(1.5, 3.0, 0.0);
     let up = Vector::new(0.0, 1.0, 0.0);
 
-    let width = 600;
-    let height = 600;
+    let width = 3000;
+    let height = 3000;
     let fov = PI / 3.5;
     let mut camera = Camera::new(width as f64, height as f64, fov);
     camera.transform = view_transformation(from, to, up);

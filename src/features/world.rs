@@ -53,6 +53,12 @@ impl World {
             &comps.normalv,
             self.is_shadowed(&comps.over_point),
         );
+        if comps.object.material.reflective > 0.0 && comps.object.material.transparency > 0.0 {
+            let reflectance = comps.shlick();
+            return surface
+                + self.reflected_color(comps, remaining) * reflectance
+                + self.refracted_color(comps, remaining) * (1.0 - reflectance);
+        }
         surface + self.reflected_color(comps, remaining) + self.refracted_color(comps, remaining)
     }
 
@@ -443,5 +449,38 @@ mod world_tests {
             color,
             Color::new(0.9364253889815014, 0.6864253889815014, 0.6864253889815014)
         );
+    }
+    #[test]
+    fn shade_hit_with_reflective_transparent_material() {
+        let mut w = World::default();
+        let r = Ray::new(
+            Point::new(0.0, 0.0, -3.0),
+            Vector::new(0.0, -(2.0_f64.sqrt() / 2.0), 2.0_f64.sqrt() / 2.0),
+        );
+        let floor = Object::plane_builder()
+            .transformation(translation(0.0, -1.0, 0.0))
+            .material(Material {
+                reflective: 0.5,
+                transparency: 0.5,
+                refractive_index: 1.5,
+                ..Default::default()
+            })
+            .build();
+        let ball = Object::sphere_builder()
+            .transformation(translation(0.0, -3.5, -0.5))
+            .material(Material {
+                color: Color::new(1.0, 0.0, 0.0),
+                ambient: 0.5,
+                ..Default::default()
+            })
+            .build();
+        w.add_shapes(vec![floor, ball]);
+        let xs = [Intersection::new(2.0_f64.sqrt(), &w.objects[2])];
+        let comps = Computation::new(&r, &xs[0], &xs);
+        let color = w.shade_hit(&comps, 5);
+        assert_eq!(
+            color,
+            Color::new(0.9339151412754023, 0.696434227200244, 0.692430691912747)
+        )
     }
 }
