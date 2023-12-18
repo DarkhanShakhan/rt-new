@@ -227,7 +227,6 @@ mod lighting_tests {
 
 #[cfg(test)]
 mod refraction_tests {
-    use crate::features::{scaling, translation, Computation, Intersection, Matrice, Ray};
 
     use super::*;
     #[test]

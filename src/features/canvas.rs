@@ -15,12 +15,13 @@ impl Canvas {
         }
     }
 
-    pub fn to_ppm(&self) {
-        print!("P3\n{} {}\n255\n", self.width, self.height);
+    pub fn to_ppm(&self) -> String {
+        let mut content = format!("P3\n{} {}\n255\n", self.width, self.height);
         for line in self.canvas.clone().into_iter() {
             for pixel in line {
-                print!("{}", pixel.clamp().rgb.as_str())
+                content.push_str(&pixel.clamp().rgb.as_str())
             }
         }
+        content
     }
 }

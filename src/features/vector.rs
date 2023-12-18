@@ -35,6 +35,15 @@ impl Vector {
     pub fn reflect(&self, normal: &Self) -> Self {
         *self - *normal * 2.0 * self.dot_product(normal)
     }
+    pub fn x(&self) -> f64 {
+        self.position.x
+    }
+    pub fn y(&self) -> f64 {
+        self.position.y
+    }
+    pub fn z(&self) -> f64 {
+        self.position.z
+    }
 }
 
 impl From<Tuple> for Vector {

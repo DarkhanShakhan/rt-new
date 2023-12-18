@@ -29,9 +29,19 @@ impl Object {
     pub fn sphere_builder() -> ObjectBuilder {
         ObjectBuilder::sphere()
     }
+    pub fn cube_builder() -> ObjectBuilder {
+        ObjectBuilder::cube()
+    }
     pub fn plane_builder() -> ObjectBuilder {
         ObjectBuilder::plane()
     }
+    pub fn cylinder_builder(min: f64, max: f64, closed: bool) -> ObjectBuilder {
+        ObjectBuilder::cylinder(min, max, closed)
+    }
+    pub fn cone_builder(min: f64, max: f64, closed: bool) -> ObjectBuilder {
+        ObjectBuilder::cone(min, max, closed)
+    }
+
     pub fn intersect(&self, ray: &Ray) -> Option<Vec<f64>> {
         let transformed_ray = ray.transform(&self.transformation_inverse);
         self.shape.intersect(&transformed_ray)
@@ -81,10 +91,27 @@ impl ObjectBuilder {
             ..Default::default()
         }
     }
-
+    pub fn cube() -> ObjectBuilder {
+        ObjectBuilder {
+            shape: Some(Shape::Cube),
+            ..Default::default()
+        }
+    }
     pub fn plane() -> ObjectBuilder {
         ObjectBuilder {
             shape: Some(Shape::Plane),
+            ..Default::default()
+        }
+    }
+    pub fn cylinder(min: f64, max: f64, closed: bool) -> ObjectBuilder {
+        ObjectBuilder {
+            shape: Some(Shape::Cylinder(min, max, closed)),
+            ..Default::default()
+        }
+    }
+    pub fn cone(min: f64, max: f64, closed: bool) -> ObjectBuilder {
+        ObjectBuilder {
+            shape: Some(Shape::Cone(min, max, closed)),
             ..Default::default()
         }
     }
