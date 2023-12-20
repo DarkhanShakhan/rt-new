@@ -10,3 +10,5 @@ indicatif = "0.17.6"
 rand = "0.8.4"
 rayon = "1.6"
 float-cmp = "0.9"
+serde = {version ="1.0.193", features = ["derive"]}
+serde_yaml = "0.9"
