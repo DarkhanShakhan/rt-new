@@ -22,28 +22,8 @@ pub struct Material {
 }
 
 impl Material {
-    pub fn new(
-        color: Color,
-        ambient: f64,
-        diffuse: f64,
-        specular: f64,
-        shininess: f64,
-        pattern: Option<Pattern>,
-        reflective: f64,
-        transparency: f64,
-        refractive_index: f64,
-    ) -> Self {
-        Material {
-            color,
-            ambient,
-            diffuse,
-            specular,
-            shininess,
-            pattern,
-            reflective,
-            transparency,
-            refractive_index,
-        }
+    pub fn builder() -> MaterialBuilder {
+        MaterialBuilder::default()
     }
     pub fn lighting(
         &self,
@@ -89,10 +69,84 @@ impl Material {
 
 impl Default for Material {
     fn default() -> Self {
-        Material::new(WHITE, 0.1, 0.9, 0.9, 200.0, None, 0.0, 0.0, 1.0)
+        Material {
+            color: WHITE,
+            ambient: 0.1,
+            diffuse: 0.9,
+            specular: 0.9,
+            shininess: 200.0,
+            pattern: None,
+            reflective: 0.0,
+            transparency: 0.0,
+            refractive_index: 1.0,
+        }
     }
 }
 
+#[derive(Default)]
+pub struct MaterialBuilder {
+    color: Option<Color>,
+    ambient: Option<f64>,
+    diffuse: Option<f64>,
+    specular: Option<f64>,
+    shininess: Option<f64>,
+    pattern: Option<Pattern>,
+    reflective: Option<f64>,
+    transparency: Option<f64>,
+    refractive_index: Option<f64>,
+}
+
+impl MaterialBuilder {
+    pub fn color(mut self, color: Color) -> MaterialBuilder {
+        self.color = Some(color);
+        self
+    }
+    pub fn ambient(mut self, ambient: f64) -> MaterialBuilder {
+        self.ambient = Some(ambient);
+        self
+    }
+    pub fn diffuse(mut self, diffuse: f64) -> MaterialBuilder {
+        self.diffuse = Some(diffuse);
+        self
+    }
+    pub fn specular(mut self, specular: f64) -> MaterialBuilder {
+        self.specular = Some(specular);
+        self
+    }
+    pub fn shininess(mut self, shininess: f64) -> MaterialBuilder {
+        self.shininess = Some(shininess);
+        self
+    }
+    pub fn pattern(mut self, pattern: Pattern) -> MaterialBuilder {
+        self.pattern = Some(pattern);
+        self
+    }
+    pub fn reflective(mut self, reflective: f64) -> MaterialBuilder {
+        self.reflective = Some(reflective);
+        self
+    }
+    pub fn transparency(mut self, transparency: f64) -> MaterialBuilder {
+        self.transparency = Some(transparency);
+        self
+    }
+    pub fn refractive_index(mut self, refractive_index: f64) -> MaterialBuilder {
+        self.refractive_index = Some(refractive_index);
+        self
+    }
+    pub fn build(self) -> Material {
+        Material {
+            color: self.color.unwrap_or(WHITE),
+            ambient: self.ambient.unwrap_or(0.1),
+            diffuse: self.diffuse.unwrap_or(0.9),
+            specular: self.specular.unwrap_or(0.9),
+            shininess: self.shininess.unwrap_or(200.0),
+            pattern: self.pattern,
+            reflective: self.reflective.unwrap_or_default(),
+            transparency: self.transparency.unwrap_or_default(),
+            refractive_index: self.refractive_index.unwrap_or(1.0),
+        }
+    }
+}
 #[cfg(test)]
 mod material_tests {
     use super::*;
