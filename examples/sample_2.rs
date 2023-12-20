@@ -26,6 +26,14 @@ fn main() -> std::io::Result<()> {
         })
         .transformation(translation(0.0, 0.0, 15.0) * rotation_x(PI / 2.0))
         .build();
+    let ceiling = Object::plane_builder()
+        .material(
+            Material::builder()
+                .pattern(Pattern::checker(WHITE, Color::new(0.5, 0.5, 0.5)))
+                .build(),
+        )
+        .transformation(translation(0.0, 15.0, 0.0))
+        .build();
     let cube = Object::cube_builder()
         .material(Material {
             color: Color::new(0.2, 0.9, 0.4),
@@ -39,7 +47,7 @@ fn main() -> std::io::Result<()> {
 
     let light = Light::new(Point::new(-5.0, 10.0, -10.0), Color::new(0.8, 0.8, 0.8));
     let mut world = World::new(light);
-    world.add_shapes(vec![floor, left_wall, right_wall, cube]);
+    world.add_shapes(vec![floor, left_wall, right_wall, cube, ceiling]);
     let from = Point::new(3.0, 8.5, -14.5);
     let to = Point::new(0.0, 0.0, 0.0);
     let up = Vector::new(0.0, 1.0, 0.0);

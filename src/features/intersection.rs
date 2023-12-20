@@ -1,6 +1,6 @@
 use super::{object::Object, ray::Ray};
 
-#[derive(Debug, PartialEq, PartialOrd)]
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
 pub struct Intersection<'a> {
     pub object: &'a Object,
     pub t: f64,
