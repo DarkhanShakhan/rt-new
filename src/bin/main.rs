@@ -18,7 +18,7 @@ struct Config {
     light: Option<LightConfig>,
     camera: Option<CameraConfig>,
     objects: Option<Vec<ObjectConfig>>,
-    filename: Option<String>,
+    output_file: Option<String>,
 }
 
 impl Config {
@@ -34,7 +34,7 @@ impl Config {
             w
         });
         File::create(
-            String::from("samples/") + &self.filename.unwrap_or("example1".to_string()) + ".ppm",
+            String::from("samples/") + &self.output_file.unwrap_or("example1".to_string()) + ".ppm",
         )
         .unwrap()
         .write_all(camera.render(&world).to_ppm().as_bytes())
@@ -137,6 +137,9 @@ struct MaterialConfig {
     diffuse: Option<f64>,
     specular: Option<f64>,
     shininess: Option<f64>,
+    reflective: Option<f64>,
+    transparency: Option<f64>,
+    refractive_index: Option<f64>,
     pattern: Option<PatternConfig>,
 }
 
@@ -161,76 +164,106 @@ impl From<MaterialConfig> for Material {
         if let Some(pattern) = value.pattern {
             builder = builder.pattern(Pattern::from(pattern))
         }
+        if let Some(reflective) = value.reflective {
+            builder = builder.reflective(reflective);
+        }
+        if let Some(transparency) = value.transparency {
+            builder = builder.transparency(transparency);
+        }
+        if let Some(refractive_index) = value.refractive_index {
+            builder = builder.refractive_index(refractive_index);
+        }
         builder.build()
     }
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
-enum PatternConfig {
-    Checker(TupleConfig, TupleConfig),
-    Stripe(TupleConfig, TupleConfig),
-    Gradient(TupleConfig, TupleConfig),
-    Ring(TupleConfig, TupleConfig),
+struct PatternConfig {
+    pattern_type: Option<String>,
+    color_a: Option<TupleConfig>,
+    color_b: Option<TupleConfig>,
 }
+//     Checker(TupleConfig, TupleConfig),
+//     Stripe(TupleConfig, TupleConfig),
+//     Gradient(TupleConfig, TupleConfig),
+//     Ring(TupleConfig, TupleConfig),
+// }
 
 impl From<PatternConfig> for Pattern {
     fn from(value: PatternConfig) -> Self {
-        match value {
-            PatternConfig::Checker(color_a, color_b) => {
-                Pattern::checker(Color::from(color_a), Color::from(color_b))
-            }
-            PatternConfig::Stripe(color_a, color_b) => {
-                Pattern::stripe(Color::from(color_a), Color::from(color_b))
-            }
-            PatternConfig::Gradient(color_a, color_b) => {
-                Pattern::gradient(Color::from(color_a), Color::from(color_b))
-            }
-            PatternConfig::Ring(color_a, color_b) => {
-                Pattern::ring(Color::from(color_a), Color::from(color_b))
-            }
+        match value.pattern_type.unwrap().as_str() {
+            "checker" => Pattern::checker(
+                Color::from(value.color_a.unwrap()),
+                Color::from(value.color_b.unwrap()),
+            ),
+            "stripe" => Pattern::stripe(
+                Color::from(value.color_a.unwrap()),
+                Color::from(value.color_b.unwrap()),
+            ),
+            "gradient" => Pattern::gradient(
+                Color::from(value.color_a.unwrap()),
+                Color::from(value.color_b.unwrap()),
+            ),
+            "ring" => Pattern::ring(
+                Color::from(value.color_a.unwrap()),
+                Color::from(value.color_b.unwrap()),
+            ),
+            _ => Pattern::default(),
         }
     }
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Default, Clone)]
-enum ShapeConfig {
-    Plane,
-    #[default]
-    Sphere,
-    Cube,
-    Cylinder(f64, f64, bool),
-    Cone(f64, f64, bool),
+struct ShapeConfig {
+    shape_type: Option<String>,
+    min: Option<f64>,
+    max: Option<f64>,
+    closed: Option<bool>,
 }
 
 impl From<ShapeConfig> for Shape {
     fn from(value: ShapeConfig) -> Self {
-        match value {
-            ShapeConfig::Plane => Shape::Plane,
-            ShapeConfig::Sphere => Shape::Sphere,
-            ShapeConfig::Cube => Shape::Cube,
-            ShapeConfig::Cylinder(min, max, closed) => Shape::Cylinder(min, max, closed),
-            ShapeConfig::Cone(min, max, closed) => Shape::Cone(min, max, closed),
+        match value.shape_type.unwrap().as_str() {
+            "sphere" => Shape::Sphere,
+            "cone" => Shape::Cone(
+                value.min.unwrap(),
+                value.max.unwrap(),
+                value.closed.unwrap(),
+            ),
+            "cube" => Shape::Cube,
+            "cylinder" => Shape::Cylinder(
+                value.min.unwrap(),
+                value.max.unwrap(),
+                value.closed.unwrap(),
+            ),
+            "plane" => Shape::Plane,
+            _ => Shape::default(),
         }
     }
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
-enum TransformationConfig {
-    Translation(f64, f64, f64),
-    Scaling(f64, f64, f64),
-    RotationX(f64),
-    RotationY(f64),
-    RotationZ(f64),
+struct TransformationConfig {
+    transformation_type: Option<String>,
+    vec: Option<TupleConfig>,
+    rad: Option<f64>,
 }
 
 impl From<TransformationConfig> for Matrice {
     fn from(value: TransformationConfig) -> Self {
-        match value {
-            TransformationConfig::Translation(x, y, z) => translation(x, y, z),
-            TransformationConfig::Scaling(x, y, z) => scaling(x, y, z),
-            TransformationConfig::RotationX(rad) => rotation_x(rad),
-            TransformationConfig::RotationY(rad) => rotation_y(rad),
-            TransformationConfig::RotationZ(rad) => rotation_z(rad),
+        match value.transformation_type.unwrap().as_str() {
+            "translation" => {
+                let tuple = value.vec.unwrap();
+                translation(tuple.0, tuple.1, tuple.2)
+            }
+            "scaling" => {
+                let tuple = value.vec.unwrap();
+                scaling(tuple.0, tuple.1, tuple.2)
+            }
+            "rotation_x" => rotation_x(value.rad.unwrap()),
+            "rotation_y" => rotation_y(value.rad.unwrap()),
+            "rotation_z" => rotation_z(value.rad.unwrap()),
+            _ => Matrice::default(),
         }
     }
 }

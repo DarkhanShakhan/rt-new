@@ -1,54 +1,77 @@
-output-file: "sample-01-from-config"
+output_file: "sample-01-from-config"
 camera:
   from: [3.0, 8.5, -14.5]
   to: [0.0, 0.0, 0.0]
   up: [0.0, 1.0, 0.0]
-  width: 800
-  height: 800
+  width: 1200
+  height: 1200
+  fov_radian: 0.89759790102
 light:
   position: [-5.0, 10.0, -10.0]
   color: [1.0, 1.0, 1.0]
 objects:
-  - shape: "square"
-    sideLength: 45
-
-
-# camera:
-#   from: [3.0, 8.5, -14.5]
-#   to: [0.0, 0.0, 0.0]
-#   up: [0.0, 1.0, 0.0]
-#   width: 1200
-#   height: 1200
-#   fov_radian: 0.89 # PI/3.5
-
-# light:
-#   position: [-5.0, 10.0, -10.0]
-#   color: [1.0, 1.0, 1.0]
-
-# objects:
-#   # floor
-#   - material:
-#       pattern: !Checker
-#           - [1.0, 1.0, 1.0]
-#           - [0.5, 0.5, 0.5]  
-#     shape:  Plane
-#   # left wall
-#   - material:0
-#       pattern: !Checker
-#         - [1.0, 1.0, 1.0]
-#         - [0.5, 0.5, 0.5]
-#     transformation:
-#       - !Translation [-15.0, 0.0, 0.0]
-#       - !RotationZ 1.57079632679
-#   # - material:
-#   #     pattern: !Checker
-#   #       - [0.8, 0.8, 0.8]
-#   #       - [0.2, 0.2, 0.2]
-#   #     color: [0.345, 0.712, 0.1]
-#   #     ambient: 0.7
-#   #     diffuse: 0.8
-#   #   shape: Cube
-#   # - material:
-#   #     color: [1.0, 1.0, 1.0]
-#   #     ambient: 0.5
-#   #   shape: Sphere
+  # floor
+  - material:
+      pattern:
+        pattern_type: checker 
+        color_a: [1.0, 1.0, 1.0] #white
+        color_b: [0.5, 0.5, 0.5] #grey
+    shape:
+      shape_type: plane
+   # left_wall
+  - material:
+      pattern:
+        pattern_type: checker
+        color_a: [1.0, 1.0, 1.0] #white
+        color_b: [0.5, 0.5, 0.5] #grey
+    transformation:
+      - transformation_type: translation
+        vec: [-15.0, 0.0, 0.0]
+      - transformation_type: rotation_z
+        rad: 1.57079632679 #PI/2.0
+    shape:
+      shape_type: plane
+  # right_wall
+  - shape:
+      shape_type: plane
+    material:
+      pattern:
+        pattern_type: checker
+        color_a: [1.0, 1.0, 1.0] #white
+        color_b: [0.5, 0.5, 0.5] #grey
+    transformation:
+      - transformation_type: translation
+        vec: [0.0, 0.0, 15.0]
+      - transformation_type: rotation_x
+        rad: 1.57079632679 #PI/2.0
+  # ceiling
+  - shape:
+      shape_type: plane
+    material:
+      pattern:
+        pattern_type: checker
+        color_a: [1.0, 1.0, 1.0] #white
+        color_b: [0.5, 0.5, 0.5] #grey
+    transformation:
+      - transformation_type: translation
+        vec: [0.0, 15.0, 0.0]
+  # sphere_1
+  - shape:
+      shape_type: sphere
+    material:
+      color: [0.2, 1.0, 0.3]
+    transformation:
+      - transformation_type: translation
+        vec: [-6.0, 2.0, 2.0]
+      - transformation_type: scaling
+        vec: [2.0, 2.0, 2.0]
+  # sphere_2
+  - shape:
+      shape_type: "sphere"
+    material:
+      reflective: 0.9
+    transformation:
+      - transformation_type: translation
+        vec: [-5.0, 2.0, -3.0]
+      - transformation_type: scaling
+        vec: [2.0, 2.0, 2.0]
