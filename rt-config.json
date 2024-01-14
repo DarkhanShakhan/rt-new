@@ -1,0 +1,136 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "properties": {
+        "vector":{
+            "type": "array",
+            "items": { "type": "number" },
+            "minItems": 3,
+            "maxItems": 3
+        },
+        "output-file": {
+            "description": "Filename for output image",
+            "type":"string"
+        },
+        "camera": {
+            "description": "Camera settings",
+            "type":"object",
+            "properties": {
+                "from": {
+                    "description": "Position of camera",
+                    "$ref": "#properties/vector"
+                },
+                "to":{
+                    "description": "Position where camera points at",
+                    "$ref": "#properties/vector"
+                },
+                "up": {
+                    "type":"array",
+                    "$ref": "#properties/vector"
+                },
+                "width": {
+                    "type":"integer",
+                    "maximum": 1300,
+                    "minimum": 600,
+                    "default": 800
+                },
+                "height": {
+                    "type":"integer",
+                    "maximum": 1300,
+                    "minimum": 600,
+                    "default": 800
+                },
+                "fov_radian": {
+                    "type":"number",
+                    "default": 0.89
+                }
+            },
+            "required": ["from", "to", "up", "width", "height"]
+        },
+        "light": {
+            "type":"object",
+            "properties": {
+                "position": {
+                    "type":"array",
+                    "$ref": "#properties/vector"
+                },
+                "color":  {
+                    "type":"array",
+                    "$ref": "#properties/vector"
+                }
+            },
+            "required": ["position", "color"]
+        },
+        "object": {
+            "type": "object",
+            "properties": {
+                "material": {
+                    "type":"object",
+                    "properties": {
+                        "ambient": {"type":"number", "maximum": 1.0, "minimum": 0.0},
+                        "diffuse":{"type":"number", "maximum": 1.0, "minimum": 0.0}
+                    }
+                },
+                "shape": { 
+                    "type":"string",
+                    "enum": ["circle", "square",  "triangle"]
+                },
+                "radius": {
+                    "type": "number"
+                },
+                  "sideLength": {
+                    "type": "number"
+                  },
+                  "base": {
+                    "type": "number"
+                  },
+                  "height": {
+                    "type": "number"
+                  }
+            },
+            "required": [ "shape"],
+            "oneOf": [
+                {
+                  "properties": {
+                    "shape": { "const": "circle" },
+                    "radius": { "type": "number" }
+                  },
+                  "required": ["shape", "radius"]
+                },
+                {
+                  "properties": {
+                    "shape": { "const": "square" },
+                    "sideLength": { "type": "number" }
+                  },
+                  "required": ["shape", "sideLength"]
+                },
+                {
+                  "properties": {
+                    "shape": { "const": "triangle" },
+                    "base": { "type": "number" },
+                    "height": { "type": "number" }
+                  },
+                  "required": ["shape", "base", "height"]
+                }
+              ]
+        },
+        "checker": {
+            "type":"array",
+            "items": {"$ref": "#properties/vector"},
+            "minItems":2,
+            "maxItems": 2
+        },
+        "stripe": {
+            "type":"array",
+            "items": {"$ref": "#properties/vector"},
+            "minItems":2,
+            "maxItems": 2,
+            "shape": {"const":"stripe"}
+
+        },
+        "objects": {
+            "type":"array",
+            "items": {"$ref": "#properties/object"}
+        }
+    },
+    "required": ["output-file", "camera", "light", "objects"]
+}

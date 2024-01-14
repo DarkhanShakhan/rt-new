@@ -1,4 +1,9 @@
-use super::{canvas::Canvas, matrice::Matrice, point::Point, ray::Ray, world::World};
+use std::f64::consts::PI;
+
+use super::{
+    canvas::Canvas, matrice::Matrice, point::Point, ray::Ray, view_transformation, world::World,
+    Vector,
+};
 use indicatif::ProgressBar;
 extern crate rayon;
 use rayon::prelude::*;
@@ -39,8 +44,8 @@ impl Camera {
         }
     }
     pub fn ray_for_pixel(&self, px: f64, py: f64) -> Ray {
-        let xoffset = (px + 0.5) * self.pixel_size;
-        let yoffset = (py + 0.5) * self.pixel_size;
+        let xoffset = (px + 0.9) * self.pixel_size;
+        let yoffset = (py + 0.9) * self.pixel_size;
         let world_x = self.half_width - xoffset;
         let world_y = self.half_height - yoffset;
         let pixel = &self.transform.inverse() * &Point::new(world_x, world_y, -1.0);
@@ -66,6 +71,19 @@ impl Camera {
     }
 }
 
+impl Default for Camera {
+    fn default() -> Self {
+        let from = Point::new(3.0, 8.5, -14.5);
+        let to = Point::new(0.0, 0.0, 0.0);
+        let up = Vector::new(0.0, 1.0, 0.0);
+        let width = 1200;
+        let height = 1200;
+        let fov = PI / 3.5;
+        let mut res = Camera::new(width as f64, height as f64, fov);
+        res.transform = view_transformation(from, to, up);
+        res
+    }
+}
 #[cfg(test)]
 mod camera_tests {
     use std::f64::consts::PI;

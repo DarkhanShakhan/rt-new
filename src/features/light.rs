@@ -1,4 +1,4 @@
-use super::{color::Color, point::Point};
+use super::{color::Color, point::Point, WHITE};
 
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub struct Light {
@@ -12,6 +12,11 @@ impl Light {
             position,
             intensity,
         }
+    }
+}
+impl Default for Light {
+    fn default() -> Self {
+        Light::new(Point::new(-5.0, 10.0, -10.0), WHITE)
     }
 }
 
